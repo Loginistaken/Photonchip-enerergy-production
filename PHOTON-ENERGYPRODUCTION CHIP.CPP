@@ -144,10 +144,195 @@ int main() {
     ChipSpec chip_spec;
     PhotonicChip chip(chip_spec);
 
-    // Initialize Orbimint token with 65 million initial supply (from prior conversation)
-    uint64_t initial_supply = 65'000'000;
-    std::string owner_address = "0xOwner";
-    OrbimintToken orbimint(initial_supply, owner_address, chip);
+    /// SPDX-License-Identifier: MIT
+// Orbimint: Eco-Friendly, AI-Compatible Multi-Chain Blockchain Coin with Photon Chip Energy Extension
+// Language: C++
+// Combines Orbimint core blockchain with Photon Chip energy production from blockchain interaction & gas
+
+#include <iostream>
+#include <map>
+#include <string>
+#include <cstdint>
+#include <cmath>
+#include <chrono>
+#include <thread>
+#include <mutex>
+#include <vector>
+#include <algorithm>
+#include <random>
+
+// Crypto++ for RSA Sign/Verify (install Crypto++ library)
+#include <cryptopp/rsa.h>
+#include <cryptopp/osrng.h>
+#include <cryptopp/pssr.h>
+#include <cryptopp/hex.h>
+#include <cryptopp/filters.h>
+
+// HTTP client cpr (install cpr library for HTTP requests)
+#include <cpr/cpr.h>
+
+// Placeholder includes for compression (future: integrate zstd, lz4)
+#include <zlib.h>
+
+// --- Orbimint Blockchain Configurations ---
+
+constexpr uint8_t DECIMALS = 7;                          // 7 decimals precision (low gas, eco-friendly)
+constexpr uint64_t INITIAL_SUPPLY = 700000000000000000; // 7 billion ORBIM with 7 decimals (7 * 10^17)
+const std::string COIN_NAME = "Orbimint";
+const std::string COIN_SYMBOL = "ORBIM";
+constexpr uint64_t BLOCK_INTERVAL_MS = 3000;            // 3 seconds block time (fast & low gas)
+
+// --- Thread Safety ---
+std::mutex ledger_mutex;
+std::mutex tx_mutex;
+
+// --- Ledger & Account Management ---
+
+class Account {
+public:
+    uint64_t balance = 0;            // Balance stored as integer with DECIMALS precision
+    std::string publicKeyHash = "";  // Address hash (supports sha3-64 or Ethereum 40-char)
+    std::string addressType = "";    // "sha3-64" or "eth-42"
+    uint64_t energyCredits = 0;      // Photon Chip energy credits from blockchain interaction
+};
+
+std::map<std::string, Account> ledger;      // Ledger mapping address -> Account
+std::vector<std::string> activeAccounts;    // List of active accounts for pruning, display, etc.
+
+// Normalize addresses to lowercase and validate
+std::string normalizeAddress(const std::string& addr) {
+    if (addr.substr(0, 2) != "0x" || (addr.length() != 42 && addr.length() != 66)) {
+        throw std::invalid_argument("Invalid address format. Must start with 0x and length 42 or 66.");
+    }
+    std::string lowerAddr = addr;
+    std::transform(lowerAddr.begin(), lowerAddr.end(), lowerAddr.begin(), ::tolower);
+    return lowerAddr;
+}
+
+// --- RSA Signing & Verification for Transactions ---
+
+std::string signTransaction(const std::string& data, const CryptoPP::RSA::PrivateKey& privateKey) {
+    CryptoPP::AutoSeededRandomPool rng;
+    std::string signature;
+    CryptoPP::RSASSA_PKCS1v15_SHA_Signer signer(privateKey);
+    CryptoPP::StringSource ss(data, true,
+        new CryptoPP::SignerFilter(rng, signer, new CryptoPP::StringSink(signature)));
+    return signature;
+}
+
+bool verifyTransaction(const std::string& data, const std::string& signature, const CryptoPP::RSA::PublicKey& publicKey) {
+    CryptoPP::RSASSA_PKCS1v15_SHA_Verifier verifier(publicKey);
+    bool result = false;
+    try {
+        CryptoPP::StringSource ss(signature + data, true,
+            new CryptoPP::SignatureVerificationFilter(
+                verifier,
+                new CryptoPP::ArraySink((CryptoPP::byte*)&result, sizeof(result)),
+                CryptoPP::SignatureVerificationFilter::THROW_EXCEPTION | CryptoPP::SignatureVerificationFilter::SIGNATURE_AT_BEGIN));
+    } catch (...) {
+        return false;
+    }
+    return result;
+}
+
+// --- AI Block Approval Simulation ---
+
+bool approveBlockAI(const std::string& blockData) {
+    std::cout << "[AI] Analyzing block data...\n";
+    std::vector<std::string> suspiciousKeywords = {"fraud", "invalid", "error", "malicious"};
+    for (const auto& kw : suspiciousKeywords) {
+        if (blockData.find(kw) != std::string::npos) {
+            std::cerr << "[AI] Block rejected due to suspicious keyword: " << kw << std::endl;
+            return false;
+        }
+    }
+    if (blockData.size() < 100 || blockData.size() > 10000) {
+        std::cerr << "[AI] Block rejected due to invalid data length.\n";
+        return false;
+    }
+    std::cout << "[AI] Block approved.\n";
+    return true;
+}
+
+// --- Blockchain Core Functions ---
+
+// Transfer tokens from one account to another
+void transfer(const std::string& from, const std::string& to, uint64_t amount) {
+    std::lock_guard<std::mutex> lock(ledger_mutex);
+    if (ledger[from].balance < amount) {
+        std::cerr << "[Transfer] Insufficient balance from " << from << std::endl;
+        return;
+    }
+    ledger[from].balance -= amount;
+    ledger[to].balance += amount;
+    if (std::find(activeAccounts.begin(), activeAccounts.end(), to) == activeAccounts.end())
+        activeAccounts.push_back(to);
+
+    // Photon Chip Energy Production: Gain energy credits proportional to gas saved (simulated)
+    uint64_t energyProduced = amount / 1000; // Simplified: 0.1% of transfer amount as energy credits
+    ledger[to].energyCredits += energyProduced;
+
+    std::cout << "Transferred " << amount << " ORBIM from " << from << " to " << to << std::endl;
+    std::cout << "Photon Chip Energy Credits produced: " << energyProduced << std::endl;
+}
+
+// Mint new tokens to an account
+void mint(const std::string& to, uint64_t amount, const std::string& pubKeyHash = "") {
+    std::lock_guard<std::mutex> lock(ledger_mutex);
+    ledger[to].balance += amount;
+    if (!pubKeyHash.empty()) {
+        ledger[to].publicKeyHash = normalizeAddress(pubKeyHash);
+        ledger[to].addressType = (pubKeyHash.length() == 66) ? "sha3-64" : "eth-42";
+    }
+    if (std::find(activeAccounts.begin(), activeAccounts.end(), to) == activeAccounts.end())
+        activeAccounts.push_back(to);
+    std::cout << "Minted " << amount << " ORBIM tokens to " << to << std::endl;
+}
+
+// Burn tokens from an account
+void burn(const std::string& from, uint64_t amount) {
+    std::lock_guard<std::mutex> lock(ledger_mutex);
+    if (ledger[from].balance < amount) {
+        std::cerr << "[Burn] Insufficient balance from " << from << std::endl;
+        return;
+    }
+    ledger[from].balance -= amount;
+    std::cout << "Burned " << amount << " ORBIM tokens from " << from << std::endl;
+}
+
+// Show balance with decimal formatting
+void showBalance(const std::string& user) {
+    std::lock_guard<std::mutex> lock(ledger_mutex);
+    if (ledger.find(user) == ledger.end()) {
+        std::cout << "No such account: " << user << std::endl;
+        return;
+    }
+    double formatted = static_cast<double>(ledger[user].balance) / std::pow(10, DECIMALS);
+    std::cout << "Balance of " << user << ": " << formatted << " " << COIN_SYMBOL << std::endl;
+    if (!ledger[user].publicKeyHash.empty())
+        std::cout << "Public Key Hash: " << ledger[user].publicKeyHash << std::endl;
+    std::cout << "Energy Credits: " << ledger[user].energyCredits << std::endl;
+}
+
+// --- Ethereum Bridge for Cross-Chain Interactions ---
+
+class EthereumBridge {
+public:
+    std::string ethNodeURL = "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID";
+    std::string ethContractAddress = "0xYourEthContractAddressHere";
+
+    std::string buildEthTransactionJSON(const std::string& from, const std::string& to, uint64_t value) {
+        std::ostringstream oss;
+        oss << R"({
+            "jsonrpc": "2.0",
+            "method": "eth_sendTransaction",
+            "params": [{
+                "from": ")" << from << R"(",
+                "to": ")" << to << R"(",
+                "value": "0x)" << std::hex << value << R"(",
+                "gas": "0x5208",
+                "gasPrice
+
 
     // Demonstrate transfer & photon emission
     chip.set_mode(true); // AUTO mode
