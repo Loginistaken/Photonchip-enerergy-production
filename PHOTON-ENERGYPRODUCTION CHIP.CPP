@@ -29,6 +29,44 @@ struct ChipSpec {
     double temp_coeff = TEMP_COEFF;
 };
 
+#ifndef DEVICECONNECTOR_H
+#define DEVICECONNECTOR_H
+
+#include <iostream>
+#include <string>
+
+// Base class for device connections
+class DeviceConnector {
+public:
+    virtual void connect() = 0;
+    virtual void sendCommand(const std::string& cmd) = 0;
+    virtual std::string receiveData() = 0;
+    virtual ~DeviceConnector() {}
+};
+
+// Serial connection (for USB, UART, etc.)
+class SerialDeviceConnector : public DeviceConnector {
+public:
+    void connect() override {
+        std::cout << "[SerialDeviceConnector] Connecting to Photon Chip via serial..." << std::endl;
+        // TODO: implement actual serial connection logic
+    }
+
+    void sendCommand(const std::string& cmd) override {
+        std::cout << "[SerialDeviceConnector] Sending command: " << cmd << std::endl;
+        // TODO: implement send logic
+    }
+
+    std::string receiveData() override {
+        std::cout << "[SerialDeviceConnector] Receiving data..." << std::endl;
+        // TODO: implement receive logic
+        return "Mocked data from device";
+    }
+};
+
+// (Optional) Future: add Raspberry Pi or other connectors here
+
+#endif // DEVICECONNECTOR_H
 // -------- PHOTONIC CHIP MODEL --------
 class PhotonicChip {
 public:
@@ -274,6 +312,25 @@ void transfer(const std::string& from, const std::string& to, uint64_t amount) {
 
     std::cout << "Transferred " << amount << " ORBIM from " << from << " to " << to << std::endl;
     std::cout << "Photon Chip Energy Credits produced: " << energyProduced << std::endl;
+#include "DeviceConnector.h" // Add at the top if you create a separate file
+
+int main() {
+    // Create connector instance (can switch to other types in future)
+    SerialDeviceConnector device;
+
+    // Connect to device
+    device.connect();
+
+    // Send command to Photon Chip
+    device.sendCommand("START_ENERGY_PRODUCTION");
+
+    // Receive data from device
+    std::string data = device.receiveData();
+    std::cout << "Device responded: " << data << std::endl;
+
+    // ... rest of your existing energy production logic ...
+    return 0;
+}
 }
 
 // Mint new tokens to an account
