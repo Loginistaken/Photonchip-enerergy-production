@@ -180,7 +180,7 @@ constexpr uint8_t DECIMALS = 7;                          // 7 decimals precision
 constexpr uint64_t INITIAL_SUPPLY = 700000000000000000; // 7 billion ORBIM with 7 decimals (7 * 10^17)
 const std::string COIN_NAME = "Orbimint";
 const std::string COIN_SYMBOL = "ORBIM";
-constexpr uint64_t BLOCK_INTERVAL_MS = 3000;            // 3 seconds block time (fast & low gas)
+constexpr uint64_t BLOCK_INTERVAL_MS = 3000;            // 10 seconds block time (fast & low gas)
 
 // --- Thread Safety ---
 std::mutex ledger_mutex;
