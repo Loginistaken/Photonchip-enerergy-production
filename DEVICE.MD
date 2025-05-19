@@ -316,8 +316,6 @@ if __name__ == "__main__":
 
 
 """
-Next steps you can do:
-
 - Replace simulate_bluetooth_input() with real UART or BLE event reading on your device.
 - Wire the solar voltage sensor to your ADC pin.
 - Connect the recycle pin output to the hardware MOSFET or transistor controlling energy routing.
