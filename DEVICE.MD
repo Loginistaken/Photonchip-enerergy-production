@@ -1,7 +1,6 @@
 The device acts as a hardware oracle + photonic meter, verifying transactions and producing real photon emissions tied to computational cost — effectively making computation “visible” as light.
 🔧 PHYSICAL DEVICE BLUEPRINT (SECTION 1: Directions + Components)
-🔩 Device Name: Snooty Transactional Energy Node (STEN)
-🔧 Purpose:
+🔩🔧 Purpose:
 
 To physically manage, compute, and verify blockchain transactions using simplified energy equations. It acts as a mini-processor and hardware wallet, interpreting code instructions, solving cryptographic puzzles, and adjusting energy use/output.
 🧱 A. COMPONENTS LIST
