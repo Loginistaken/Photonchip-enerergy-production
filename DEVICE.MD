@@ -1,4 +1,17 @@
-The device acts as a hardware oracle + photonic meter, verifying transactions and producing real photon emissions tied to computational cost — effectively making computation “visible” as light.
+The device acts as a hardware oracle + photonic meter, verifying transactions and producing real photon emissions 
+tied to computational cost — effectively making computation “visible” as light.
+
+  Recycled Energy Integration:
+    To improve energy efficiency, the device incorporates an energy recycling mechanism. A portion of the energy emitted as light and heat is recaptured via the Energy Capture Mesh (ECM) and Power Core, and is reused to power internal device operations.
+
+    When calculating net energy usage and photon emission per transaction, the device subtracts the recycled energy (based on device efficiency) from the total energy cost. This means only the net energy, after accounting for internally recycled energy, is used in photon emission and gas cost calculation.
+
+    The effective gas cost is calculated as:
+    effective_gas = gas_used * (1 - recycle_efficiency)
+    where recycle_efficiency is the proportion of energy successfully recycled (e.g., 0.15 for 15%).
+
+    This process increases device sustainability and can be used to reduce perceived transaction costs in systems that account for net energy use.
+
 🔧 PHYSICAL DEVICE BLUEPRINT (SECTION 1: Directions + Components)
 🔩🔧 Purpose:
 
