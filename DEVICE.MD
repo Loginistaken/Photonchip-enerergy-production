@@ -259,3 +259,46 @@ Transaction Hash	Converted into QR + light output
 |                                                                |
 |           [P9] Photonic USB-C + [P10] Power Cell              |
 +-----------------------------------------
+📊 HARDWARE DEVICE COMPONENT CHART (Section 1)
+Label	Component	Material	Purpose	Description	Est. Cost (USD)
+A1	Core Processor Unit (CPU)	Silicon + Graphene	Executes smart contract logic	Square chip (20mm x 20mm)	$30
+A2	Energy Modulation Coil (EMC)	Copper-Titanium Alloy	Converts equations to physical energy output	Toroidal coil	$10
+A3	Data Link Bus (DLB)	Carbon Fiber Traces	Transfers signals across components	Etched PCB micro-lines	$5
+A4	Transaction Buffer RAM (TBR)	Graphene Layered Memory	Temporary transaction storage	Embedded rectangle chip	$15
+A5	Blockchain ID Circuit (BIC)	Sapphire + Gold Inlay	Authenticates node identity	Small crystal board	$40
+A6	Power Cell (PC)	Lithium-Carbon Fusion	Provides primary device power	Coin-sized battery	$8
+A7	Quantum Scrambler (QS)	Rare-earth + Crystal	Adds entropy to resist automation	Magnetic core cube	$20
+A8	USB-C Interface	Steel + Polymer	Data/Power interface	Standard USB-C port	$3
+A9	Display Module (DM)	OLED	Shows outputs (burn rate, entropy)	1" front screen	$12
+A10	Thermal Stabilizer Ring (TSR)	Bismuth-Tungsten Alloy	Heat regulation	Cooling ring	$18
+
+🔧 Subtotal Hardware Estimate: ≈ $161 USD
+💡 PHOTONIC PROCESSING UNIT CHART (Section 2)
+Label	Component Name	Material	Purpose	Description	Est. Cost (USD)
+P1	Photonic Processing Core	Gallium Arsenide (GaAs)	Converts computation into photon output	Photonic chip for optical output	$50
+P2	Gas-to-Frequency Transducer	Quartz + Inductor	Maps gas used → frequency (f = gas × k)	Resonator + transducer pair	$25
+P3	Photon Emission Diode (PED)	InGaAs + MicroLED	Emits photons using E = h·f	Infrared/MicroLED array	$35
+P4	Energy Capture Mesh (ECM)	Transparent Graphene	Recycles emitted photon energy	Dome-mesh collector	$15
+P5	Blockchain Logic Unit (BLU)	Silicon + FPGA	Parses transactions and triggers photon emission	Logic engine	$30
+P6	Quantum Scrambler Unit (QSU)	Neodymium Sphere + Coil	Adds entropy with randomness	Supercooled mag-pulse core	$20
+P7	Thermal Photon Stabilizer	Bismuth-Telluride Alloy	Ensures stable temperature	Alloy ring with cooling control	$18
+P8	OLED Diagnostic Interface	OLED	Displays entropy, burn, and output	1" diagnostic panel	$12
+P9	Photonic USB Interface	Titanium + Filter Array	Clean I/O with noise shielding	High-resistance optical USB	$8
+P10	Power Core	Lithium-Carbon Fusion Cell	Base power + photon recycling	Battery + light regeneration unit	$10
+
+🔬 Subtotal Photonic Unit Estimate: ≈ $223 USD
+📦 TOTAL DEVICE COST ESTIMATE (Prototype):
+
+Hardware (Section 1): ~$161
+Photonic Section (Section 2): ~$223
+🔁 Combined Total (Est. per unit): ≈ $384 USD
+🧩 FUNCTION MAPPING SUMMARY (Simplified)
+Function	Triggering Component(s)	Output
+Smart Contract Execution	A1, P5	Verified logic → data signals
+Transaction Storage & Buffering	A4	Temp RAM for pending tx
+Entropy Injection (Anti-Bot)	A7, P6	Random seed injection into puzzles
+Photon Emission per Computation	P1, P2, P3	E = h·f light burst
+Energy Recycling	P4, P10	Reduces net draw by reusing light/heat
+Display Data	A9, P8	OLED UI for real-time output
+Identity Authentication	A5, P5	Secure hash & reject invalid input
+Thermal Management	A10, P7	Maintains safe operation
