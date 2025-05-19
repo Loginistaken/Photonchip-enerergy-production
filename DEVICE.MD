@@ -366,3 +366,109 @@ Energy Capture Mesh (ECM)	Use of graphene-based conductors	Improved photon and h
 Thermophotovoltaic Systems	Integration of TPV cells	Conversion of waste heat to electricity
 Printed Circuit Boards (PCBs)	Adoption of vitrimer-based recyclable materials	Enhanced sustainability and recyclability
 Software Algorithms	Adaptive thermal management and predictive maintenance	Optimized performance and energy usage
+# energy_oracle.py
+import machine
+import time
+import random
+from machine import Pin, I2C, ADC, PWM
+import ssd1306  # OLED Display
+from bh1750 import BH1750  # Light Sensor
+
+# === CONFIGURABLE PARAMETERS ===
+RECYCLE_EFFICIENCY = 0.15  # 15% energy recycled
+ADC_SOLAR_PIN = 34  # Analog input pin to monitor solar or Power Cell voltage
+GPIO_RECYCLE_OUTPUT = 26  # Controls recycled energy routing (to power core)
+I2C_SCL = 22
+I2C_SDA = 21
+OLED_WIDTH = 128
+OLED_HEIGHT = 64
+
+# === INITIALIZATION ===
+i2c = I2C(0, scl=Pin(I2C_SCL), sda=Pin(I2C_SDA))
+oled = ssd1306.SSD1306_I2C(OLED_WIDTH, OLED_HEIGHT, i2c)
+light_sensor = BH1750(i2c)
+
+adc = ADC(Pin(ADC_SOLAR_PIN))
+adc.atten(ADC.ATTN_11DB)  # Allow voltage up to 3.3V
+
+recycle_pin = Pin(GPIO_RECYCLE_OUTPUT, Pin.OUT)
+recycle_pin.value(0)  # Start OFF
+
+# === FILE LOGGER ===
+def log(data):
+    with open("log.txt", "a") as f:
+        f.write(f"{time.time()} | {data}\n")
+
+# === ENERGY MODEL ===
+def get_light_lux():
+    try:
+        return light_sensor.luminance(BH1750.ONCE_HIRES_1)
+    except:
+        return random.randint(10, 100)  # fallback
+
+def read_solar_voltage():
+    raw = adc.read()
+    return (raw / 4095.0) * 3.3  # Scaled to volts
+
+def compute_effective_gas(gas_used, recycle_eff=RECYCLE_EFFICIENCY):
+    return gas_used * (1 - recycle_eff)
+
+# === OLED DISPLAY ===
+def update_display(photon_count, raw_gas, net_gas, voltage):
+    oled.fill(0)
+    oled.text("Photon Meter", 0, 0)
+    oled.text(f"Photon: {photon_count}", 0, 16)
+    oled.text(f"Raw Gas: {raw_gas}", 0, 26)
+    oled.text(f"Net Gas: {net_gas:.2f}", 0, 36)
+    oled.text(f"Volt: {voltage:.2f}V", 0, 46)
+    oled.show()
+
+# === ENERGY ROUTING ===
+def route_recycled_energy(voltage):
+    # Route energy if voltage exceeds threshold
+    if voltage > 2.5:
+        recycle_pin.value(1)  # Activate recycle bus
+    else:
+        recycle_pin.value(0)
+
+# === BLUETOOTH COMMANDS (Simulated) ===
+def simulate_bluetooth_input():
+    # Simulate BLE command like: "alice|50"
+    users = ["alice", "bob", "satoshi"]
+    sender = random.choice(users)
+    gas = random.randint(20, 80)
+    return f"{sender}|{gas}"
+
+# === MAIN LOOP ===
+def main():
+    while True:
+        # 1. Bluetooth / UART input
+        command = simulate_bluetooth_input()
+        if "|" in command:
+            sender, gas_str = command.split("|")
+            try:
+                gas_used = int(gas_str.strip())
+            except:
+                gas_used = 0
+
+            # 2. Light measurement
+            photon_count = get_light_lux()
+
+            # 3. Solar energy reading
+            voltage = read_solar_voltage()
+
+            # 4. Energy calculation
+            net_gas = compute_effective_gas(gas_used)
+
+            # 5. Energy routing logic
+            route_recycled_energy(voltage)
+
+            # 6. OLED update
+            update_display(photon_count, gas_used, net_gas, voltage)
+
+            # 7. Log data
+            log(f"Sender={sender}, Raw={gas_used}, Net={net_gas:.2f}, Lux={photon_count}, Volt={voltage:.2f}")
+
+        time.sleep(3)
+
+main()
