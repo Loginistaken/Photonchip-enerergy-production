@@ -261,6 +261,73 @@ def main():
 
 if __name__ == "__main__":
     main()
+# --- Hardware Control Insert for ESP32-like Device ---
+
+import time
+import random
+
+# Simulated ADC reading for solar voltage sensor
+def read_solar_voltage_adc():
+    # Replace with actual ADC read code, e.g. ADC.read() on ESP32
+    simulated_voltage = random.uniform(2.5, 5.0)  # Simulate 2.5-5.0V solar panel output
+    return simulated_voltage
+
+# Simulated Bluetooth UART input (replace with real BLE or UART reading)
+def simulate_bluetooth_input():
+    # Placeholder: Randomly simulate commands or data packets from BLE/UART
+    commands = ['START', 'STOP', 'STATUS', None]
+    return random.choice(commands)
+
+# Control MOSFET transistor based on solar voltage and recycle logic
+def control_mosfet(solar_voltage, threshold=3.3):
+    # Simulate MOSFET control (ON if voltage above threshold)
+    if solar_voltage > threshold:
+        mosfet_state = 'ON'
+    else:
+        mosfet_state = 'OFF'
+    print(f"MOSFET state: {mosfet_state} (Solar voltage: {solar_voltage:.2f} V)")
+    return mosfet_state
+
+# Main loop simulation
+def main_loop():
+    print("Starting hardware control simulation...")
+    try:
+        while True:
+            # Read solar voltage sensor (ADC)
+            solar_voltage = read_solar_voltage_adc()
+
+            # Control MOSFET based on voltage
+            control_mosfet(solar_voltage)
+
+            # Simulate Bluetooth input handling
+            bt_command = simulate_bluetooth_input()
+            if bt_command:
+                print(f"Received Bluetooth command: {bt_command}")
+
+            # Delay between cycles
+            time.sleep(2)
+
+    except KeyboardInterrupt:
+        print("Exiting hardware control simulation.")
+
+# If run standalone for test
+if __name__ == "__main__":
+    main_loop()
+
+
+"""
+Next steps you can do:
+
+- Replace simulate_bluetooth_input() with real UART or BLE event reading on your device.
+- Wire the solar voltage sensor to your ADC pin.
+- Connect the recycle pin output to the hardware MOSFET or transistor controlling energy routing.
+- Tune voltage thresholds and recycle efficiency constants.
+- Add error handling or hardware security checks as needed.
+- Optionally add QR/hash display on OLED for on-chain verification.
+- Add USB-C blockchain verification interface if desired.
+
+If you want, I can also generate a wiring schematic diagram for this hardware setup (ESP32 + BH1750 + OLED + solar ADC + MOSFET control) or help you extend it with real Bluetooth UART integration code.
+"""
 
 🔡 Firmware (C++/Embedded Pseudo)
 
