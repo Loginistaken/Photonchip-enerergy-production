@@ -326,7 +326,6 @@ Next steps you can do:
 - Optionally add QR/hash display on OLED for on-chain verification.
 - Add USB-C blockchain verification interface if desired.
 
-If you want, I can also generate a wiring schematic diagram for this hardware setup (ESP32 + BH1750 + OLED + solar ADC + MOSFET control) or help you extend it with real Bluetooth UART integration code.
 """
 
 🔡 Firmware (C++/Embedded Pseudo)
