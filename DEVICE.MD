@@ -115,7 +115,10 @@ P10	Power Core	Lithium-Carbon Fusion Cell	Feeds base power + harvests regenerati
     Maps gas → frequency using physics:
     f = gas × k
     E = h·f → Light energy output per transaction.
-
+float recycle_efficiency = 0.15; // Example: 15% recycled
+float effective_gas = gas * (1 - recycle_efficiency);
+float freq = effective_gas * GAS_CONSTANT;       // f = k·gas (using effective_gas)
+float energy = PLANCK * freq;                    // E = h·f
     Emits real photons scaled to computational energy.
 
     Interacts with PC via photonic USB bridge.
@@ -132,10 +135,13 @@ P10	Power Core	Lithium-Carbon Fusion Cell	Feeds base power + harvests regenerati
 #include "usb_io.h"
 #include "display.h"
 
-const float PLANCK = 6.626e-34;
-const float LIGHT_SPEED = 3e8;
-const float GAS_CONSTANT = 1.42e12; // Tuned constant (Hz/gas unit)
-
+float gas = tx.gasUsed;
+float freq = gas * GAS_CONSTANT;       // f = k·gas
+float energy = PLANCK * freq;          // E = h·f
+float recycle_efficiency = 0.15; // Example: 15% recycled
+float effective_gas = gas * (1 - recycle_efficiency);
+float freq = effective_gas * GAS_CONSTANT;       // f = k·gas (using effective_gas)
+float energy = PLANCK * freq;                    // E = h·f
 void loop() {
     initialize_system();
     
@@ -188,10 +194,11 @@ class PhotonicChip:
         loss = math.exp(-(self.temperature - T_ref) / 100)
         return max(loss, 0.1)
 
-    def photons_emitted(self, gas_units):
-        energy_per_photon = self.photon_energy()
-        adjusted_emission = gas_units * self.efficiency * self.thermal_loss_factor()
-        return int(adjusted_emission / energy_per_photon)
+   def photons_emitted(self, gas_units, recycle_efficiency=0.15):
+    energy_per_photon = self.photon_energy()
+    adjusted_gas = gas_units * (1 - recycle_efficiency)
+    adjusted_emission = adjusted_gas * self.efficiency * self.thermal_loss_factor()
+    return int(adjusted_emission / energy_per_photon)
 
     def simulate_operation(self, gas_units):
         photons = self.photons_emitted(gas_units)
