@@ -30,6 +30,8 @@ A9	Display Module (DM)	OLED Microdisplay	Shows data, burn rate, puzzle results	1
 A10	Thermal Stabilizer Ring (TSR)	Bismuth-tungsten alloy	Regulates heat during intense computation	Ring that cools via passive convection
 🛠️ B. DEVICE ASSEMBLY STEPS
 
+# Modifcations to make this gadget even more energy efficent.
+
     Lay out a 3-layer PCB with Graphene data channels and carbon substrate.
 
     Mount the CPU (A1) centrally.
