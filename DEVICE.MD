@@ -53,16 +53,6 @@ Device can be enclosed in a transparent polymer casing for inspection and heat v
 
     It securely stores identity via the BIC and refuses suspicious requests.
 
-
-
-
-
-
-
-
-
-
-
 🔩 A. CORE COMPONENTS LIST (With Realistic Physics)
 Label	Component Name	Material	Role
 P1	Photonic Processing Core (PPC)	Gallium Arsenide (GaAs) Photonic IC	Converts digital transaction signals into light based on Planck-frequency relation.
