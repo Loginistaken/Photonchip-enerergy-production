@@ -321,3 +321,78 @@ class TransactionLogic:
 if __name__ == "__main__":
     transaction = TransactionLogic(voltage=2.7)
     output = transaction.execute()
+class PhotonAmplificationSystem:
+    def __init__(self):
+        self.tri_dopants = ['Mn', 'Al', 'Fe']
+        self.gain_medium = "InGaAs"  # Select based on matched spectrum
+        self.photovoltaic_type = "Perovskite"
+        self.tpv_type = "GaSb TPV Cell"
+        self.energy_collected = 0.0  # in joules
+        self.recycled_photons = 0
+        self.photon_log = []
+
+    def generate_photons(self, excitation_energy: float) -> list:
+        """Simulate tri-doped Rose Quartz photon emissions based on excitation input."""
+        spectrum = {
+            "Mn": "Green (520–540 nm)",
+            "Al": "Blue-Violet (430–460 nm)",
+            "Fe": "Infrared (800–1100 nm)"
+        }
+        emitted_photons = [{"dopant": d, "wavelength": spectrum[d], "energy": excitation_energy / 3}
+                           for d in self.tri_dopants]
+        self.photon_log.extend(emitted_photons)
+        return emitted_photons
+
+    def amplify_photons(self, photons: list, pump_power: float) -> list:
+        """Simulate photon amplification using gain medium (optical pumping)."""
+        gain_factor = 2.5  # Simulated optical gain
+        amplified = [{"wavelength": p["wavelength"],
+                      "energy": p["energy"] * gain_factor,
+                      "amplified": True}
+                     for p in photons]
+        return amplified
+
+    def convert_to_electricity(self, photons: list) -> float:
+        """Simulate energy conversion via photovoltaic and TPV."""
+        visible_band = ["Green (520–540 nm)", "Blue-Violet (430–460 nm)"]
+        ir_band = ["Infrared (800–1100 nm)"]
+
+        visible_energy = sum(p["energy"] for p in photons if p["wavelength"] in visible_band)
+        ir_energy = sum(p["energy"] for p in photons if p["wavelength"] in ir_band)
+
+        pv_efficiency = 0.25
+        tpv_efficiency = 0.15
+
+        pv_output = visible_energy * pv_efficiency
+        tpv_output = ir_energy * tpv_efficiency
+
+        total_energy = pv_output + tpv_output
+        self.energy_collected += total_energy
+        return total_energy
+
+    def recycle_photons(self, photons: list) -> int:
+        """Simulate the photon recycling mesh to re-emit unconverted photons."""
+        recycled = int(len(photons) * 0.4)  # 40% of photons are recyclable
+        self.recycled_photons += recycled
+        return recycled
+
+    def simulate_cycle(self, excitation_energy: float, pump_power: float):
+        """Simulates one full cycle of photon generation, amplification, conversion, and recycling."""
+        print(f"Starting simulation cycle...")
+        raw_photons = self.generate_photons(excitation_energy)
+        amplified = self.amplify_photons(raw_photons, pump_power)
+        energy_out = self.convert_to_electricity(amplified)
+        recycled = self.recycle_photons(amplified)
+
+        print(f"Photon cycle summary:")
+        print(f"- Photons generated: {len(raw_photons)}")
+        print(f"- Amplified photon output: {len(amplified)}")
+        print(f"- Electrical energy generated: {energy_out:.4f} J")
+        print(f"- Photons recycled: {recycled}")
+        print(f"- Total energy collected so far: {self.energy_collected:.4f} J")
+
+# Entry Point
+if __name__ == "__main__":
+    system = PhotonAmplificationSystem()
+    # Example: Inject 9.0 Joules excitation with 3.0 Joules pump
+    system.simulate_cycle(excitation_energy=9.0, pump_power=3.0)
