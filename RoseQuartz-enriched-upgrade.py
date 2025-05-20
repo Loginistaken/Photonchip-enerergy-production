@@ -103,6 +103,71 @@ if __name__ == "__main__":
         print(layer)
 
 """
+"""
+Photon Emission & Recycling Module - Tri-Doped Rose Quartz Upgrade
+==================================================================
+
+This module enhances the original device by integrating a photon emission core based on
+tri-doped Rose Quartz (Mn + Al + Fe). Each dopant contributes to multi-spectrum emission:
+
+- Mn (Manganese): Enhances red spectrum (~660 nm) and photon recycling properties.
+- Al (Aluminum): Broadens visible light output (green/yellow ~550–580 nm).
+- Fe (Iron): Enhances IR (~850 nm) and UV (~380 nm) interactions.
+
+The chip uses a voltage-driven band tuning mechanism to modulate emission wavelengths dynamically.
+"""
+
+import math
+
+# Physical constants
+PLANCK = 6.62607015e-34        # Planck constant (Joule·seconds)
+LIGHT_SPEED = 299_792_458      # Speed of light (meters/second)
+ELEMENTARY_CHARGE = 1.602e-19  # Coulombs
+
+# Mn-doped Rose Quartz: emits red ~660 nm; band tuning via voltage
+# Mn + Al or Mn + Fe extend the range into green/yellow and UV/IR
+BASE_WAVELENGTH_MN = 660e-9  # Red, 660 nm
+BASE_WAVELENGTH_AL = 580e-9  # Yellow-green
+BASE_WAVELENGTH_FE = 850e-9  # Near-IR
+
+VOLTAGE_FACTOR = 0.05        # Tuned effect of voltage on bandgap contraction/expansion
+
+def calculate_emission_wavelength(base_wavelength, voltage):
+    """
+    Calculate the photon emission wavelength after voltage modulation.
+    Dopant-induced lattice strain allows photon tuning.
+    """
+    return base_wavelength * (1 - VOLTAGE_FACTOR * voltage)
+
+def compute_photon_energy(wavelength):
+    """
+    Compute the energy of a photon at a given wavelength.
+    """
+    return PLANCK * LIGHT_SPEED / wavelength
+
+class RoseQuartzPhotonChip:
+    def __init__(self, voltage=1.0):
+        self.voltage = voltage
+        self.dopants = ['Mn', 'Al', 'Fe']
+        self.wavelengths = {}
+        self.energies = {}
+
+    def simulate_emissions(self):
+        """
+        Simulate photon emissions from each dopant under applied voltage.
+        """
+        self.wavelengths['Mn'] = calculate_emission_wavelength(BASE_WAVELENGTH_MN, self.voltage)
+        self.wavelengths['Al'] = calculate_emission_wavelength(BASE_WAVELENGTH_AL, self.voltage)
+        self.wavelengths['Fe'] = calculate_emission_wavelength(BASE_WAVELENGTH_FE, self.voltage)
+
+        for dopant, wl in self.wavelengths.items():
+            self.energies[dopant] = compute_photon_energy(wl)
+
+    def display_emission_data(self):
+        print(f"\n[Photon Emission Data for Tri-Doped Rose Quartz at {self.voltage} V]")
+        for dopant in self.dopants:
+            wl_nm = self.wavelengths[dopant]_
+
 EXPECTED OUTPUT:
 [PhotonChip] Manganese activated: Red/IR photon emission (630-680 nm)
 [PhotonChip] Iron activated: Green/Yellow photon band (510-600 nm)
