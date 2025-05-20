@@ -112,3 +112,14 @@ EXPECTED OUTPUT:
 {'dopant': 'Mn', 'element': 'Manganese', ...}
 ...
 """
+dopant_zones = {
+    "Mn": {"range_nm": (630, 680), "voltage": 3.0},
+    "Fe": {"range_nm": (510, 600), "voltage": 4.2},
+    "Al": {"range_nm": (400, 480), "voltage": 5.0}
+}
+
+def excite_dopant(voltage):
+    for dopant, config in dopant_zones.items():
+        if abs(voltage - config["voltage"]) < 0.2:
+            return f"{dopant} activated at {config['range_nm']} nm"
+    return "No dopant active"
