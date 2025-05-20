@@ -20,14 +20,18 @@ This module upgrades the existing energy device by introducing a photon chip mad
 Together, these dopants provide full-spectrum photon emission from UV to IR, improving thermal-to-light conversion and light recycling by up to 50%.
 
 This photon chip insert can be added to the initial energy device without full redesign. It integrates into the Energy Capture Mesh (ECM) to enhance multi-band photon capture.
-"""
-[ Transaction Logic ] 
-        ↓
-[ BLU → RMTU ] ← Mn-Rose Quartz Photon Cavity (tri-doped with Mn, Fe, Al)
-        ↓                          ↑
-[ PPC ] → Light Emission (PED) → ECM → Feedback Recycle
-        ↓                          ↑
-    OLED & Gas Frequency Display ← Thermal Stabilizer
+[ Transaction Logic ]
+"""[Tri-Doped Rose Quartz Chip (Mn + Al + Fe)]  BLU → RMTU ] ← Mn-Rose Quartz Photon Cavity (tri-doped with Mn, Fe, Al)
+            ↓
+[Optical Gain Medium Layer (e.g., Er:YAG, InGaAs)]
+            ↓
+[Amplified Photon Emission][ PPC ] → Light Emission (PED) → ECM → Feedback Recycle
+            ↓
+[Photovoltaic (Visible) + TPV (IR) Conversion]
+            ↓
+[Electrical Output + Residual Photon Recycling Layer] OLED & Gas Frequency Display ← Thermal Stabilizer
+            ↓
+[System Feedback + AI Control Loop]
 
 # --- Dopant Emission Definitions ---
 dopant_properties = {
