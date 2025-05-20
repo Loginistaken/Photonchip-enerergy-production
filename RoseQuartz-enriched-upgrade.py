@@ -27,9 +27,9 @@ This photon chip insert can be added to the initial energy device without full r
             ↓
 [Amplified Photon Emission][ PPC ] → Light Emission (PED) → ECM → Feedback Recycle
             ↓
-[Photovoltaic (Visible) + TPV (IR) Conversion]
+[Photovoltaic (Visible) + TPV (IR) Conversion]OLED & Gas Frequency Display ← Thermal Stabilizer
             ↓
-[Electrical Output + Residual Photon Recycling Layer] OLED & Gas Frequency Display ← Thermal Stabilizer
+[Electrical Output + Residual Photon Recycling Layer] 
             ↓
 [System Feedback + AI Control Loop]
 
