@@ -449,3 +449,11 @@ public:
 
     return 0;
 }
+uint64_t photons_absorbed(uint64_t incident_photons) const {
+    return static_cast<uint64_t>(incident_photons * quantum_efficiency());
+}
+double generated_current(uint64_t incident_photons) const {
+    double charge = 1.602e-19; // electron charge (Coulombs)
+    uint64_t absorbed = photons_absorbed(incident_photons);
+    return absorbed * charge; // Amperes
+}
