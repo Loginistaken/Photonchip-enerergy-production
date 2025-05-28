@@ -1,27 +1,28 @@
-# Rose Quartz Photon Chip Insert
-# Description: Full-spectrum photon emission and recycling chip using doped Rose Quartz (Mn, Al, Fe)
+# Rose Quartz Photon Chip Insert - Phosphorus Upgrade
+# Description: Full-spectrum photon emission and recycling chip using doped Rose Quartz (Mn, P, Fe)
 # This is an energy recycling add-on for the original device. It expands photon capture capabilities.
 # It references the original device's energy core but enhances it with multi-dopant quantum mineral logic.
 
 ⚗️ How Multi-Dopants Help with Energy Recycling
 Dopant Combo	Spectral Effect	Function in Recycling Core
 Mn (Manganese)	Red/near-IR (~660 nm)	Triggers visible emission + piezo boost
-Al (Aluminum)	UV to blue shift (~400–480 nm)	Adds high-energy photon emissions
+P (Phosphorus)	UV to blue shift (~420–480 nm)	Adds high-energy photon emissions
 Fe (Iron)	Broad visible range (~500–600+ nm)	Enables multi-wavelength thermal capture
-Mn + Al	Red + Blue (bimodal)	Two-path photon response: short + long range
+Mn + P	Red + Blue (bimodal)	Two-path photon response: short + long range
 Mn + Fe	Red + Green/Yellow (trichromatic)	Covers thermal + visible + low IR
+
 """
 OVERVIEW:
 This module upgrades the existing energy device by introducing a photon chip made from Rose Quartz enriched with:
  - Manganese (Mn) for red/near-IR emissions
- - Aluminum (Al) for UV-blue emissions
+ - Phosphorus (P) for UV-blue emissions
  - Iron (Fe) for green-yellow photon range
 
 Together, these dopants provide full-spectrum photon emission from UV to IR, improving thermal-to-light conversion and light recycling by up to 50%.
 
 This photon chip insert can be added to the initial energy device without full redesign. It integrates into the Energy Capture Mesh (ECM) to enhance multi-band photon capture.
 [ Transaction Logic ]
-"""[Tri-Doped Rose Quartz Chip (Mn + Al + Fe)]  BLU → RMTU ] ← Mn-Rose Quartz Photon Cavity (tri-doped with Mn, Fe, Al)
+"""[Tri-Doped Rose Quartz Chip (Mn + P + Fe)]  BLU → RMTU ] ← Mn-Rose Quartz Photon Cavity (tri-doped with Mn, Fe, P)
             ↓
 [Optical Gain Medium Layer (e.g., Er:YAG, InGaAs)]
             ↓
@@ -41,9 +42,9 @@ dopant_properties = {
         "effect": "Red/IR photon emission",
         "voltage": 3.0
     },
-    "Al": {
-        "element": "Aluminum",
-        "spectrum_nm": (400, 480),
+    "P": {
+        "element": "Phosphorus",
+        "spectrum_nm": (420, 480),
         "effect": "UV-Blue photon generation",
         "voltage": 5.0
     },
@@ -121,15 +122,14 @@ if __name__ == "__main__":
         print(layer)
 
 """
-"""
-Photon Emission & Recycling Module - Tri-Doped Rose Quartz Upgrade
-==================================================================
+Photon Emission & Recycling Module - Tri-Doped Rose Quartz Upgrade (Mn, P, Fe)
+===============================================================================
 
 This module enhances the original device by integrating a photon emission core based on
-tri-doped Rose Quartz (Mn + Al + Fe). Each dopant contributes to multi-spectrum emission:
+tri-doped Rose Quartz (Mn + P + Fe). Each dopant contributes to multi-spectrum emission:
 
 - Mn (Manganese): Enhances red spectrum (~660 nm) and photon recycling properties.
-- Al (Aluminum): Broadens visible light output (green/yellow ~550–580 nm).
+- P (Phosphorus): Broadens visible light output (blue/UV ~420–480 nm).
 - Fe (Iron): Enhances IR (~850 nm) and UV (~380 nm) interactions.
 
 The chip uses a voltage-driven band tuning mechanism to modulate emission wavelengths dynamically.
@@ -143,9 +143,9 @@ LIGHT_SPEED = 299_792_458      # Speed of light (meters/second)
 ELEMENTARY_CHARGE = 1.602e-19  # Coulombs
 
 # Mn-doped Rose Quartz: emits red ~660 nm; band tuning via voltage
-# Mn + Al or Mn + Fe extend the range into green/yellow and UV/IR
+# Mn + P or Mn + Fe extend the range into blue/UV and IR
 BASE_WAVELENGTH_MN = 660e-9  # Red, 660 nm
-BASE_WAVELENGTH_AL = 580e-9  # Yellow-green
+BASE_WAVELENGTH_P = 460e-9   # Blue/UV for phosphorus
 BASE_WAVELENGTH_FE = 850e-9  # Near-IR
 
 VOLTAGE_FACTOR = 0.05        # Tuned effect of voltage on bandgap contraction/expansion
@@ -166,7 +166,7 @@ def compute_photon_energy(wavelength):
 class RoseQuartzPhotonChip:
     def __init__(self, voltage=1.0):
         self.voltage = voltage
-        self.dopants = ['Mn', 'Al', 'Fe']
+        self.dopants = ['Mn', 'P', 'Fe']
         self.wavelengths = {}
         self.energies = {}
 
@@ -175,7 +175,7 @@ class RoseQuartzPhotonChip:
         Simulate photon emissions from each dopant under applied voltage.
         """
         self.wavelengths['Mn'] = calculate_emission_wavelength(BASE_WAVELENGTH_MN, self.voltage)
-        self.wavelengths['Al'] = calculate_emission_wavelength(BASE_WAVELENGTH_AL, self.voltage)
+        self.wavelengths['P'] = calculate_emission_wavelength(BASE_WAVELENGTH_P, self.voltage)
         self.wavelengths['Fe'] = calculate_emission_wavelength(BASE_WAVELENGTH_FE, self.voltage)
 
         for dopant, wl in self.wavelengths.items():
@@ -184,21 +184,24 @@ class RoseQuartzPhotonChip:
     def display_emission_data(self):
         print(f"\n[Photon Emission Data for Tri-Doped Rose Quartz at {self.voltage} V]")
         for dopant in self.dopants:
-            wl_nm = self.wavelengths[dopant]_
+            wl_nm = self.wavelengths[dopant] * 1e9
+            energy_ev = self.energies[dopant] / ELEMENTARY_CHARGE
+            print(f"{dopant}: {wl_nm:.1f} nm, {energy_ev:.3f} eV")
 
-EXPECTED OUTPUT:
+EXPECTED_OUTPUT = """
 [PhotonChip] Manganese activated: Red/IR photon emission (630-680 nm)
 [PhotonChip] Iron activated: Green/Yellow photon band (510-600 nm)
-[PhotonChip] Aluminum activated: UV-Blue photon generation (400-480 nm)
+[PhotonChip] Phosphorus activated: UV-Blue photon generation (420-480 nm)
 
 [Device ECM Photon Layers]:
 {'dopant': 'Mn', 'element': 'Manganese', ...}
 ...
 """
+
 dopant_zones = {
     "Mn": {"range_nm": (630, 680), "voltage": 3.0},
     "Fe": {"range_nm": (510, 600), "voltage": 4.2},
-    "Al": {"range_nm": (400, 480), "voltage": 5.0}
+    "P": {"range_nm": (420, 480), "voltage": 5.0}
 }
 
 def excite_dopant(voltage):
@@ -206,13 +209,14 @@ def excite_dopant(voltage):
         if abs(voltage - config["voltage"]) < 0.2:
             return f"{dopant} activated at {config['range_nm']} nm"
     return "No dopant active"
+
 """
-Enriched Mn-Fe-Al Tri-Doped Rose Quartz Photon Engine
+Enriched Mn-Fe-P Tri-Doped Rose Quartz Photon Engine
 =====================================================
 Simulates a full transaction logic and photon emission loop.
 
 Incorporates:
-- Mn, Fe, Al doped Rose Quartz for multi-spectrum emission
+- Mn, Fe, P doped Rose Quartz for multi-spectrum emission
 - PED (Photon Emission Device)
 - ECM (Energy Conversion Module)
 - BLU (Base Logic Unit), RMTU (Reconfigurable Multi-Tier Unit)
@@ -231,7 +235,7 @@ VOLTAGE_FACTOR = 0.05
 # === Base Wavelengths by Dopant (in meters) ===
 DOPANTS = {
     'Mn': 660e-9,  # Red
-    'Al': 580e-9,  # Yellow-Green
+    'P': 460e-9,   # Blue/UV for phosphorus
     'Fe': 850e-9   # IR
 }
 
@@ -321,9 +325,10 @@ class TransactionLogic:
 if __name__ == "__main__":
     transaction = TransactionLogic(voltage=2.7)
     output = transaction.execute()
+
 class PhotonAmplificationSystem:
     def __init__(self):
-        self.tri_dopants = ['Mn', 'Al', 'Fe']
+        self.tri_dopants = ['Mn', 'P', 'Fe']
         self.gain_medium = "InGaAs"  # Select based on matched spectrum
         self.photovoltaic_type = "Perovskite"
         self.tpv_type = "GaSb TPV Cell"
@@ -335,7 +340,7 @@ class PhotonAmplificationSystem:
         """Simulate tri-doped Rose Quartz photon emissions based on excitation input."""
         spectrum = {
             "Mn": "Green (520–540 nm)",
-            "Al": "Blue-Violet (430–460 nm)",
+            "P": "Blue-Violet (420–480 nm)",
             "Fe": "Infrared (800–1100 nm)"
         }
         emitted_photons = [{"dopant": d, "wavelength": spectrum[d], "energy": excitation_energy / 3}
@@ -354,7 +359,7 @@ class PhotonAmplificationSystem:
 
     def convert_to_electricity(self, photons: list) -> float:
         """Simulate energy conversion via photovoltaic and TPV."""
-        visible_band = ["Green (520–540 nm)", "Blue-Violet (430–460 nm)"]
+        visible_band = ["Green (520–540 nm)", "Blue-Violet (420–480 nm)"]
         ir_band = ["Infrared (800–1100 nm)"]
 
         visible_energy = sum(p["energy"] for p in photons if p["wavelength"] in visible_band)
