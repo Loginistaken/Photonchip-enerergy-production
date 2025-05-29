@@ -68,18 +68,44 @@ bool detect_photon_device() {
 }
 bool show_license_agreement() {
 #ifdef _WIN32
-    std::wstring license = L"PhotonDevice Installation Agreement:\n\n"
-         int result = system("zenity --forms --title='License & Login' --text='Enter credentials to continue' \
- --add-entry='Username' --add-entry='Password' --add-entry='Email'");                  L"By installing and using this device, you agree to the terms of the provided license.\n"
-                           L"\n[Insert full legal text here]\n\n"
-                           L"Click OK to accept, Cancel to abort installation.";
-    int result = MessageBoxW(NULL, license.c_str(), L"PhotonDevice License Agreement", MB_OKCANCEL | MB_ICONINFORMATION);
-    return result == IDOK;
+    std::wstring license =
+        L"PHOTON CHIP INSTALLATION & BLOCKCHAIN CONSENT\n\n"
+        L"By clicking OK, you consent to the following:\n"
+        L"  - Device activation and communication with your computer\n"
+        L"  - Tracking of energy recycling and photon emissions for blockchain operations\n"
+        L"  - Data exchanges related to token transfers and blockchain interactions\n"
+        L"\n"
+        L"You must accept this agreement for the chip and software to operate.\n"
+        L"\n[Insert full legal/technical text here]\n";
+    int result = MessageBoxW(NULL, license.c_str(), L"PhotonDevice License & Blockchain Agreement", MB_OKCANCEL | MB_ICONINFORMATION);
+    if (result == IDOK) {
+        std::cout << "[License] User accepted the agreement." << std::endl;
+        return true;
+    } else {
+        std::cout << "[License] User declined the agreement." << std::endl;
+        return false;
+    }
 #else
-    // Linux/MacOS fallback using Zenity or kdialog
-    int result = system("zenity --question --title='License Agreement' "
-                        "--width=400 --text='PhotonDevice Installation Agreement:\n\n[Insert legal text here]\n\nDo you accept?'");
-    return result == 0;
+    // Linux/MacOS: Use zenity for graphical dialog
+    std::string agreement_text =
+        "PHOTON CHIP INSTALLATION & BLOCKCHAIN CONSENT\n\n"
+        "By clicking OK, you consent to the following:\n"
+        "  - Device activation and communication with your computer\n"
+        "  - Tracking of energy recycling and photon emissions for blockchain operations\n"
+        "  - Data exchanges related to token transfers and blockchain interactions\n"
+        "\n"
+        "You must accept this agreement for the chip and software to operate.\n"
+        "\n[Insert full legal/technical text here]\n";
+    std::string cmd = "zenity --question --width=500 --title='PhotonDevice License & Blockchain Agreement' --text=\"" +
+        agreement_text + "\"";
+    int result = system(cmd.c_str());
+    if (result == 0) {
+        std::cout << "[License] User accepted the agreement." << std::endl;
+        return true;
+    } else {
+        std::cout << "[License] User declined the agreement." << std::endl;
+        return false;
+    }
 #endif
 }
 #endif
