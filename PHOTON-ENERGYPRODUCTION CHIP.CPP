@@ -69,7 +69,8 @@ bool detect_photon_device() {
 bool show_license_agreement() {
 #ifdef _WIN32
     std::wstring license = L"PhotonDevice Installation Agreement:\n\n"
-                           L"By installing and using this device, you agree to the terms of the provided license.\n"
+         int result = system("zenity --forms --title='License & Login' --text='Enter credentials to continue' \
+ --add-entry='Username' --add-entry='Password' --add-entry='Email'");                  L"By installing and using this device, you agree to the terms of the provided license.\n"
                            L"\n[Insert full legal text here]\n\n"
                            L"Click OK to accept, Cancel to abort installation.";
     int result = MessageBoxW(NULL, license.c_str(), L"PhotonDevice License Agreement", MB_OKCANCEL | MB_ICONINFORMATION);
@@ -237,14 +238,29 @@ public:
         uint64_t photons_emitted = 0;
         double energy_emitted = 0.0;
     };
-
+struct UserCredentials {
+  std::map<std::string, UserCredentials> user_db;
+std::string username;
+    std::string email;
+    std::string password_hash; // Never store plaintext!
+    uint64_t token_amount;
+    std::time_t timestamp;
+    // Add more fields as needed (e.g., 2FA secret, device ID)
+};
     std::map<std::string, Account> accounts;
     uint8_t decimals = 7;  // Orbimint uses 7 decimals
     uint64_t totalSupply;
     PhotonicChip& chip;
+std::string device_signature;
+std::string recovery_question;
+std::string backup_email;
 #include <libusb-1.0/libusb.h>
 // ... (other includes)
+bool verify_firmware_signature(const std::string& firmware_path);
+// Call this before running chip logic
 
+bool request_user_pin();
+// Call this before sensitive operations
 bool detect_photon_device(uint16_t vendor_id, uint16_t product_id) {
     libusb_context* ctx = NULL;
     libusb_device** devs;
@@ -354,7 +370,17 @@ void secure_zero(void* p, size_t n) {
 #include <zlib.h>
 
 // --- Orbimint Blockchain Configurations ---
+#include <cryptopp/sha.h>
+#include <cryptopp/hex.h>
 
+// Utility function for SHA-256 hashing
+std::string hash_password(const std::string& password, const std::string& salt) {
+    std::string input = password + salt;
+    CryptoPP::SHA256 hash;
+    std::string digest;
+    CryptoPP::StringSource s(input, true, new CryptoPP::HashFilter(hash, new CryptoPP::HexEncoder(new CryptoPP::StringSink(digest))));
+    return digest;
+}
 constexpr uint8_t DECIMALS = 7;                          // 7 decimals precision (low gas, eco-friendly)
 constexpr uint64_t INITIAL_SUPPLY = 700000000000000000; // 7 billion ORBIM with 7 decimals (7 * 10^17)
 const std::string COIN_NAME = "Orbimint";
