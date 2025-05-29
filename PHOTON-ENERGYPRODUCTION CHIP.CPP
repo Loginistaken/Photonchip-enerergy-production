@@ -63,7 +63,20 @@ public:
         return "Mocked data from device";
     }
 };
+// Hardware Abstraction Layer for microcontroller/SoC support
+class HardwareAbstraction {
+public:
+    virtual void setGPIO(int pin, bool value) = 0;
+    virtual int readADC(int channel) = 0;
+    virtual ~HardwareAbstraction() {}
+};
 
+// Example stub for future embedded/FPGA/SoC integration
+class DummyHardware : public HardwareAbstraction {
+public:
+    void setGPIO(int pin, bool value) override {}
+    int readADC(int channel) override { return 0; }
+};
 // (Optional) Future: add Raspberry Pi or other connectors here
 
 #endif // DEVICECONNECTOR_H
@@ -104,7 +117,14 @@ public:
     double total_energy_emitted(uint64_t gas_used) const {
         return photons_emitted(gas_used) * photon_energy();
     }
-
+#include <immintrin.h>
+// Example: Accelerate photon energy computation (for batch arrays)
+// (Add only if you have large array-based calculations)
+void simd_photon_energy(const double* freqs, double* energies, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        energies[i] = PLANCK * freqs[i];
+    }
+}
     void simulate_operation(uint64_t gas_used, const std::string& caller = "user") {
         auto n_photons = photons_emitted(gas_used);
         auto e_total = total_energy_emitted(gas_used);
@@ -119,7 +139,31 @@ public:
 
     void set_mode(bool is_auto) { auto_mode = is_auto; }
 };
+#include <thread>
+#include <atomic>
 
+class RealTimePhotonSimulator {
+public:
+    RealTimePhotonSimulator(PhotonicChip& chip) : chip_(chip), running_(false) {}
+    void start(uint64_t gas_per_cycle, int interval_ms = 100) {
+        running_ = true;
+        worker_ = std::thread([this, gas_per_cycle, interval_ms]() {
+            while (running_) {
+                chip_.simulate_operation(gas_per_cycle, "real_time_thread");
+                std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
+            }
+        });
+    }
+    void stop() {
+        running_ = false;
+        if (worker_.joinable()) worker_.join();
+    }
+    ~RealTimePhotonSimulator() { stop(); }
+private:
+    PhotonicChip& chip_;
+    std::atomic<bool> running_;
+    std::thread worker_;
+};
 // -------- ORBIMINT ERC-20 STYLE TOKEN SIMULATION --------
 class OrbimintToken {
 public:
@@ -186,7 +230,18 @@ int main() {
 // Orbimint: Eco-Friendly, AI-Compatible Multi-Chain Blockchain Coin with Photon Chip Energy Extension
 // Language: C++
 // Combines Orbimint core blockchain with Photon Chip energy production from blockchain interaction & gas
+// Securely zero memory for sensitive data (C++17 or above)
+#include <cstring>
 
+// Utility function: securely wipe sensitive data buffers
+void secure_zero(void* p, size_t n) {
+#if defined(_WIN32)
+    SecureZeroMemory(p, n);
+#else
+    std::memset(p, 0, n);
+    std::atomic_signal_fence(std::memory_order_seq_cst);
+#endif
+}
 #include <iostream>
 #include <map>
 #include <string>
@@ -427,6 +482,27 @@ public:
             bool success = orbimint.transfer(from, to, value * static_cast<uint64_t>(std::pow(10, orbimint.decimals)), gas);
             if (!success) std::cout << "Transfer failed." << std::endl;
         }
+// If compiling with pybind11, expose key functions to Python
+#ifdef BUILD_PYBIND
+#include <pybind11/pybind11.h>
+
+namespace py = pybind11;
+
+PYBIND11_MODULE(photonchip_cpp, m) {
+    py::class_<ChipSpec>(m, "ChipSpec")
+        .def(py::init<>())
+        .def_readwrite("wavelength_nm", &ChipSpec::wavelength_nm)
+        .def_readwrite("efficiency", &ChipSpec::efficiency)
+        .def_readwrite("temperature", &ChipSpec::temperature);
+
+    py::class_<PhotonicChip>(m, "PhotonicChip")
+        .def(py::init<const ChipSpec&>())
+        .def("photon_frequency", &PhotonicChip::photon_frequency)
+        .def("photon_energy", &PhotonicChip::photon_energy)
+        .def("photons_emitted", &PhotonicChip::photons_emitted)
+        .def("total_energy_emitted", &PhotonicChip::total_energy_emitted);
+}
+#endif
         else if (cmd == "manual") {
             uint64_t gas;
             std::cout << "Gas used: "; std::cin >> gas;
