@@ -4,7 +4,12 @@
 #include <map>
 #include <iomanip>
 #include <algorithm>
-
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <cstdlib>
+#endif
+#include <string>
 // -------- PHYSICAL CONSTANTS --------
 constexpr double PLANCK = 6.626e-34;          // Planck's constant (J*s)
 constexpr double C = 3.0e8;                    // Speed of light (m/s)
@@ -28,7 +33,55 @@ struct ChipSpec {
     int photons_per_gas_unit = PHOTONS_PER_GAS_UNIT;
     double temp_coeff = TEMP_COEFF;
 };
+// --- USB Device Detection ---
+// Example IDs, replace with your actual device's vendor and product IDs
+constexpr uint16_t PHOTON_VENDOR_ID = 0xC0DE;
+constexpr uint16_t PHOTON_PRODUCT_ID = 0xB10C;
 
+#ifdef _WIN32
+#include <setupapi.h>
+#pragma comment(lib, "setupapi.lib")
+// For real deployment: use SetupDi APIs or libusb for robust detection
+bool detect_photon_device() {
+    // TODO: Implement full Windows USB device detection for production
+    return true; // For now, always 'find' device
+}
+#else
+#include <libusb-1.0/libusb.h>
+bool detect_photon_device() {
+    libusb_context* ctx = nullptr;
+    libusb_device** devs;
+    bool found = false;
+    libusb_init(&ctx);
+    ssize_t cnt = libusb_get_device_list(ctx, &devs);
+    for (ssize_t i = 0; i < cnt; i++) {
+        libusb_device_descriptor desc;
+        libusb_get_device_descriptor(devs[i], &desc);
+        if (desc.idVendor == PHOTON_VENDOR_ID && desc.idProduct == PHOTON_PRODUCT_ID) {
+            found = true;
+            break;
+        }
+    }
+    libusb_free_device_list(devs, 1);
+    libusb_exit(ctx);
+    return found;
+}
+bool show_license_agreement() {
+#ifdef _WIN32
+    std::wstring license = L"PhotonDevice Installation Agreement:\n\n"
+                           L"By installing and using this device, you agree to the terms of the provided license.\n"
+                           L"\n[Insert full legal text here]\n\n"
+                           L"Click OK to accept, Cancel to abort installation.";
+    int result = MessageBoxW(NULL, license.c_str(), L"PhotonDevice License Agreement", MB_OKCANCEL | MB_ICONINFORMATION);
+    return result == IDOK;
+#else
+    // Linux/MacOS fallback using Zenity or kdialog
+    int result = system("zenity --question --title='License Agreement' "
+                        "--width=400 --text='PhotonDevice Installation Agreement:\n\n[Insert legal text here]\n\nDo you accept?'");
+    return result == 0;
+#endif
+}
+#endif
 #ifndef DEVICECONNECTOR_H
 #define DEVICECONNECTOR_H
 
@@ -43,7 +96,9 @@ public:
     virtual std::string receiveData() = 0;
     virtual ~DeviceConnector() {}
 };
-
+double n_photons = spec.photons_per_gas_unit * gas_used * quantum_efficiency() * temp_emission_scaling();
+double effective_gas = gas_used * (1.0 - get_dynamic_recycle_efficiency());
+double n_photons = spec.photons_per_gas_unit * effective_gas * quantum_efficiency() * temp_emission_scaling();
 // Serial connection (for USB, UART, etc.)
 class SerialDeviceConnector : public DeviceConnector {
 public:
@@ -136,7 +191,17 @@ void simd_photon_energy(const double* freqs, double* energies, size_t count) {
                   << " | Total energy (J): " << e_total
                   << " | Caller: " << caller << std::endl;
     }
-
+    // Device detection and license agreement
+    if (!detect_photon_device()) {
+        std::cerr << "PhotonDevice not detected. Please connect via USB-C and retry." << std::endl;
+        return 1;
+    }
+    if (!show_license_agreement()) {
+        std::cerr << "Installation aborted. User did not accept the license agreement." << std::endl;
+        return 1;
+    }
+    std::cout << "User accepted agreement. Proceeding with installation/activation..." << std::endl;
+    // TODO: Add installation logic if needed (driver copy, config, etc.)
     void set_mode(bool is_auto) { auto_mode = is_auto; }
 };
 #include <thread>
@@ -177,7 +242,28 @@ public:
     uint8_t decimals = 7;  // Orbimint uses 7 decimals
     uint64_t totalSupply;
     PhotonicChip& chip;
+#include <libusb-1.0/libusb.h>
+// ... (other includes)
 
+bool detect_photon_device(uint16_t vendor_id, uint16_t product_id) {
+    libusb_context* ctx = NULL;
+    libusb_device** devs;
+    ssize_t cnt;
+    bool found = false;
+    libusb_init(&ctx);
+    cnt = libusb_get_device_list(ctx, &devs);
+    for (ssize_t i = 0; i < cnt; i++) {
+        libusb_device_descriptor desc;
+        libusb_get_device_descriptor(devs[i], &desc);
+        if (desc.idVendor == vendor_id && desc.idProduct == product_id) {
+            found = true;
+            break;
+        }
+    }
+    libusb_free_device_list(devs, 1);
+    libusb_exit(ctx);
+    return found;
+}
     OrbimintToken(uint64_t initial_supply, const std::string& owner, PhotonicChip& chip_model)
         : chip(chip_model) {
         totalSupply = initial_supply * static_cast<uint64_t>(std::pow(10, decimals));
@@ -524,10 +610,15 @@ PYBIND11_MODULE(photonchip_cpp, m) {
     }
 
     return 0;
-}
-uint64_t photons_absorbed(uint64_t incident_photons) const {
+}_t photons_absorbed(uint64_t incident_photons) const {
     return static_cast<uint64_t>(incident_photons * quantum_efficiency());
 }
+if (!verify_identity(tx.sender)) {
+    show_error("Unauthorized Tx");
+    continue;
+}
+// After transaction in transfer, or after simulate_operation
+display.show_transaction(gas_used, effective_gas, n_photons, total_energy, ...);
 double generated_current(uint64_t incident_photons) const {
     double charge = 1.602e-19; // electron charge (Coulombs)
     uint64_t absorbed = photons_absorbed(incident_photons);
